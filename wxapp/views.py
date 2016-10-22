@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.shortcuts import render
 from django.http.response import HttpResponse
 
@@ -11,3 +13,17 @@ def wx(req):
 
 def index(req):
     return HttpResponse("Hello, world!")
+
+
+def echo(req):
+    from .reqparser import text_req
+    from .rspbuilder.textbuilder import TextMsg
+    msg = text_req.parse(req.body)
+
+    if isinstance(msg, text_req.Msg) and msg.MsgType == 'text':
+        toUser = msg.FromUserName
+        fromUser = msg.ToUserName
+        content = "test"
+        replyMsg = TextMsg(toUser, fromUser, content)
+
+        return HttpResponse(str(replyMsg), content_type="text/xml")
